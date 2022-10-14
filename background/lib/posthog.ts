@@ -1,5 +1,3 @@
-export const { POSTHOG_API_KEY } = process.env.POSTHOG_API_KEY
-
 interface HogEventProp {
   distinct_id: string
   data: string
@@ -29,7 +27,7 @@ export async function createEvent(
       body: JSON.stringify({
         // this is a safe public write only api key
         // roll this key for demo
-        api_key: POSTHOG_API_KEY,
+        api_key: "phc_VzveyNxrn2xyiKDYn7XjrgaqELGeUilDZGiBVh6jNmh",
         event: posthogEventId,
         properties: {
           distinct_id: userID,
@@ -53,18 +51,20 @@ export async function createEvent(
   } catch (error) {
     if (error instanceof Error) {
       return Promise.reject(error.message)
-    } // eslint-disable-next-line no-console
+    }
     return Promise.reject()
   }
 }
 
 export function posthogEvent(eventName: string) {
   chrome.cookies.get(
-    { url: "https://tally.cash/", name: "UUID" },
+    { url: "https://localhost:8001/", name: "UUID" },
 
-    function (cookie) {
+    function fetchCookie(cookie) {
       if (cookie) {
         createEvent(eventName, cookie.value)
+        // eslint-disable-next-line no-console
+        console.log("UUID: ", cookie.value)
       }
     }
   )
